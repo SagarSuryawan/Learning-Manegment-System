@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import cookieParser  from "cookie-parser" 
 import morgan from "morgan"
+import userroutes from "./routes/user_routes.js"
 
 const app = express()
 app.use(express.json())
@@ -12,7 +13,9 @@ app.use(cors({
 }))
 
 app.use(cookieParser())
+
 app.use (morgan("dev"))
+
 app.use("/ping", function(req,res){
     res.send(" Yes, Server is up")
 })
@@ -20,6 +23,8 @@ app.use("/ping", function(req,res){
 
 
 // Routes of three modules 
+
+app.use("/user",userroutes)
 
 app.all("*", (req,res) => {
     res.status(404)
