@@ -1,11 +1,13 @@
 import {Schema ,model} from "mongoose"
+import jwt from "jsonwebtoken"
+import bcrypt from "bcryptjs"
  
 const userSchema = new Schema ({
 fullname:{
     type:'String',
     required:[true,"name is required"],
     trim:true,
-    maxLength:[15,'fullname must be less than 15 char' ],
+    maxLength:[20,'fullname must be less than 20 char' ],
     lowercase:true
 },
 email:{
@@ -39,6 +41,27 @@ forgotpasswordToken:'String',
 forgotpasswordexpiry:Date   
 },{
     timestamps:true
+
+})
+
+// token
+userSchema.methods = {
+    jwtToken() {
+        return jwt.sign(
+            {id:this.id,email:this.email},
+            process.env.SECRET,
+            {expiresIn:"24 hr"}
+        )
+    }
+}
+// bcrypt password
+
+userSchema.pre("save", async function (next){
+
+if(!this.isModified('password')){
+    return next()
+}
+this.password = await bcrypt.hash(this.password,10)
 
 })
 

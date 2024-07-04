@@ -3,6 +3,7 @@ import cors from "cors"
 import cookieParser  from "cookie-parser" 
 import morgan from "morgan"
 import userroutes from "./routes/user_routes.js"
+import errormiddleware from "./middleware/error.middleware.js"
 
 const app = express()
 app.use(express.json())
@@ -31,5 +32,6 @@ app.all("*", (req,res) => {
     res.send('OOPS! 404 Page Not Found')
 })
 
+app.use(errormiddleware)
 
 export default app;
