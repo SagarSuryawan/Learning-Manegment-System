@@ -5,6 +5,7 @@ const isLoggedin = async(req,res,next)=>{
 
     const {token} = req.cookies 
 
+    
     if(!token){
         return next(new AppError("User not Authorized",401))
     }
@@ -14,6 +15,4 @@ const isLoggedin = async(req,res,next)=>{
     next()
 }
 
-export{
-    isLoggedin
-}
+export default isLoggedin

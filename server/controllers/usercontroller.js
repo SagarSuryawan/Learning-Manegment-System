@@ -1,6 +1,11 @@
 import AppError from "../utils/error.utils.js"
 import USER from "../model/user.model.js"
 
+const cookieOption = {
+    maxAge:7 * 24 * 60 * 60 * 1000,
+    secure:true,
+    httpOnly:true 
+}
 
 const register =async (req,res,next) => {
     const { fullname, email, password } = req.body
@@ -36,9 +41,12 @@ const register =async (req,res,next) => {
     // to assure that user data saved in databse
     user.password = undefined
 
-    const token  = await USER.
+    const token  = await user.jwtToken()
+
+    res.cookie("token",token,cookieOption)
 
     res.status(200).json({
+        token,
         success:true,
         message:"user registerd successfully",
         user
@@ -54,20 +62,20 @@ const signin = async(req,res,next)=> {
         return next (new AppError ("All Feild Are Required",400))
     }
 
-    const userExists = await USER.findOne({email}).select('+password')
+    const user = await USER.findOne({email}).select('+password')
 
     // if user not exists or user password does not match,then return error
-    if(!userExists || !USER.comparePassword(password)){
+    if(!user || !user.comparePassword(password)){
         return next (new AppError ("user or password does not match",400))
     }
 
-    const token = await USER.jwtToken()
+    const token = await user.jwtToken()
     user.password = undefined
 
     res.cookie("token",token,cookieOption)
     
     res.status(200).json({
-        success:false,
+        success:true,
         message:"user login successfully",
         user
     })

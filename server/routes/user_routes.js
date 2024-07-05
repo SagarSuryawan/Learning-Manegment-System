@@ -1,6 +1,6 @@
 import {Router} from "express"
 import { getprofile ,register,signin,logout} from "../controllers/usercontroller.js";
-import { isLoggedin } from "../middleware/auth.middleware.js";
+import isLoggedin from "../middleware/auth.middleware.js";
 
 
 const router = Router()

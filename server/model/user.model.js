@@ -34,8 +34,8 @@ secure_url:{
 },
 role:{
     type:'String',
-    enum:['USER','ADMIN'],
-    default:'USER'
+    enum:['user','admin'],
+    default:'user'
 },
 forgotpasswordToken:'String',
 forgotpasswordexpiry:Date   
@@ -45,20 +45,21 @@ forgotpasswordexpiry:Date
 })
 
 // token
-userSchema.methods = {
-    // create token
-    jwtToken() {
-        return jwt.sign(
-            {id:this.id,email:this.email},
-            process.env.SECRET,
-            {expiresIn:"24 hr"}
-        )
-    },
-    // compare password
-     async comparePassword(plainTextPassword){
-        return await bcrypt.compare(plainTextPassword,this.password)
-    }
-}
+    userSchema.methods = {
+        // create token
+         jwtToken() {
+            return  jwt.sign(
+                {id:this.id,email:this.email},
+                process.env.SECRET,
+                {expiresIn:"24h"}
+            )
+        },
+        // compare password
+         comparePassword(plainTextPassword){
+            return  bcrypt.compare(plainTextPassword,this.password)
+            
+        }
+    } 
 
 // bcrypt password
 userSchema.pre("save", async function (next){
