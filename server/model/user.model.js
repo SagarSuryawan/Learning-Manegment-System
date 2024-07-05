@@ -46,16 +46,21 @@ forgotpasswordexpiry:Date
 
 // token
 userSchema.methods = {
+    // create token
     jwtToken() {
         return jwt.sign(
             {id:this.id,email:this.email},
             process.env.SECRET,
             {expiresIn:"24 hr"}
         )
+    },
+    // compare password
+     async comparePassword(plainTextPassword){
+        return await bcrypt.compare(plainTextPassword,this.password)
     }
 }
-// bcrypt password
 
+// bcrypt password
 userSchema.pre("save", async function (next){
 
 if(!this.isModified('password')){
