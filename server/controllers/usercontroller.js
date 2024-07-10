@@ -7,7 +7,7 @@ const cookieOption = {
     httpOnly:true 
 }
 
-const register =async (req,res,next) => {
+const register = async (req,res,next) => {
     const { fullname, email, password } = req.body
 
     if(!fullname || !email || !password){
@@ -41,12 +41,13 @@ const register =async (req,res,next) => {
     // to assure that user data saved in databse
     user.password = undefined
 
+// user can automatically signin
+
     const token  = await user.jwtToken()
 
     res.cookie("token",token,cookieOption)
 
     res.status(200).json({
-        token,
         success:true,
         message:"user registerd successfully",
         user
@@ -85,7 +86,7 @@ const signin = async(req,res,next)=> {
     
 }
 
-const logout = (req,res) => {
+const logout = (req,res,next) => {
     res.cookie("token",null,{
         secure:true,
         maxAge:0,
@@ -103,7 +104,7 @@ const getprofile = async(req,res,next) =>{
     // so i can retrive info from token and add in request.
     try {
         const userid = req.user.id
-        const user = await USER.findById(userId);
+        const user = await USER.findById(userid);
 
         res.status(200).json({
             success:true,

@@ -26,11 +26,9 @@ password:{
 // profile photo
 avatar:{
 public_id:{
-    type:'String'
-},
+    type:'String'},
 secure_url:{
-    type:'String'
-}
+    type:'String'}
 },
 role:{
     type:'String',
@@ -41,7 +39,6 @@ forgotpasswordToken:'String',
 forgotpasswordexpiry:Date   
 },{
     timestamps:true
-
 })
 
 // token
@@ -55,6 +52,7 @@ forgotpasswordexpiry:Date
             )
         },
         // compare password
+        // It takes a plaintext password as input and compares it with the hashed password stored in the database.
          comparePassword(plainTextPassword){
             return  bcrypt.compare(plainTextPassword,this.password)
             

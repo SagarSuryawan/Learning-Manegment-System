@@ -10,7 +10,7 @@ const isLoggedin = async(req,res,next)=>{
         return next(new AppError("User not Authorized",401))
     }
 
-    const userDetail = await jwt.verify(token.process.env.SECRET)
+    const userDetail = await jwt.verify(token,process.env.SECRET)
     req.user = userDetail
     next()
 }
