@@ -1,5 +1,7 @@
 import AppError from "../utils/error.utils.js"
 import USER from "../model/user.model.js"
+import cloudinary from "cloudinary"
+import fs from "fs/promises"
 
 const cookieOption = {
     maxAge:7 * 24 * 60 * 60 * 1000,
@@ -35,7 +37,31 @@ const register = async (req,res,next) => {
     if(!user){
         return next (new AppError ('user not registered',400))
     }
-    //TODO:File Upload
+    //File Upload
+    //converted file got in request
+    
+    if(req.file){
+        // upload in cloudinary 
+        try {
+            const result = await cloudinary.v2.uploader.upload(req.file.path,{
+                folder:'LMS',
+                width:250,
+                height:250,
+                gravity:'faces',
+                crop:'fill'
+            });
+            // if i got a result 
+            if(result){
+                user.avatar.public_id = result.public_id;
+                user.avatar.secure_url = result.secure_url
+
+                // remove file local 
+                fs.rm(`uploads/${req.file.filename}`)
+            }
+        } catch (e) {
+            return next(new AppError (e.message || 'File not uploaded',500))
+        }
+    }
         
     await user.save()
     // to assure that user data saved in databse
