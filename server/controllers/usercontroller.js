@@ -43,6 +43,7 @@ const register = async (req,res,next) => {
     if(req.file){
         // upload in cloudinary 
         try {
+            // upload the file to Cloudinary.cloudinary.v2.uploader.upload method uploads the file located at req.file.path.
             const result = await cloudinary.v2.uploader.upload(req.file.path,{
                 folder:'LMS',
                 width:250,
