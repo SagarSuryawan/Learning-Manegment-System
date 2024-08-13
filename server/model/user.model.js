@@ -1,6 +1,7 @@
 import {Schema ,model} from "mongoose"
 import jwt from "jsonwebtoken"
 import bcrypt from "bcryptjs"
+import crypto from "crypto"
  
 const userSchema = new Schema ({
 fullname:{
@@ -56,7 +57,20 @@ forgotpasswordexpiry:Date
          comparePassword(plainTextPassword){
             return  bcrypt.compare(plainTextPassword,this.password)
             
+        },
+        // GENRATE RANDOM TOKEN
+        genratePasswordReserToken:async function () {
+
+            const resetToken = crypto.randomBytes(20).toString('hex') //Generates a random string of 40 characters in hexadecimal format.
+
+            this.forgotpasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+            
+
+            this.forgotpasswordexpiry = Date.now() + 15 * 60 * 1000; //15 min from now  
+            
+            return resetToken;
         }
+
     } 
 
 // bcrypt password
