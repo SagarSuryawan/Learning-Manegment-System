@@ -58,14 +58,19 @@ forgotpasswordexpiry:Date
             return  bcrypt.compare(plainTextPassword,this.password)
             
         },
-        // GENRATE RANDOM TOKEN
-        genratePasswordReserToken:async function () {
+        // GENRATE RANDOM RESET TOKEN
+        genratePasswordResetToken:async function () {
 
             const resetToken = crypto.randomBytes(20).toString('hex') //Generates a random string of 40 characters in hexadecimal format.
 
-            this.forgotpasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
-            
+            this.forgotpasswordToken = crypto.createHash('sha256')
+                                      .update(resetToken)
+                                      .digest('hex');
+            // The function then takes the generated token and hashes it using the SHA-256 cryptographic hash function (crypto.createHash('sha256')).
+            // .update(resetToken) is where the actual data (the resetToken) is passed into the hash function.
+            // .digest('hex') tells the hash function to output the final hash in hexadecimal format 
 
+            
             this.forgotpasswordexpiry = Date.now() + 15 * 60 * 1000; //15 min from now  
             
             return resetToken;

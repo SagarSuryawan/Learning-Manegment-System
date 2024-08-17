@@ -15,6 +15,7 @@ const upload = multer({
         filename:(req,file,cb) =>{
             cb(null,file.originalname)
         },
+        // dest is simpler and provides a quick way to store files with default settings, whereas storage offers full customization over the storage process.
     }),
 
     fileFilter:(req,file,cb) =>{
