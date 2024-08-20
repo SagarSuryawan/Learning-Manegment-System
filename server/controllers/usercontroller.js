@@ -145,7 +145,7 @@ const getprofile = async(req,res,next) =>{
     }
     
 }
-const forgotPassword = async(req,res,next) =>{
+const forgotPassword = async(req,res,next) =>{ 
 
     const {email} = req.body
 
@@ -164,7 +164,7 @@ const forgotPassword = async(req,res,next) =>{
     // store a reset token in database  and genrate URL.
     await user.save()
 
-    const resetPasswordUrl = `http://localhost:5055/reset/${resetToken}`
+    const resetPasswordUrl = `http://localhost:${process.env.PORT}/reset-/${resetToken}`
 
     console.log("link: ",resetPasswordUrl)
 
