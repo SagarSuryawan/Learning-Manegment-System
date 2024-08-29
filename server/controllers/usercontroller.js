@@ -146,7 +146,7 @@ const getprofile = async(req,res,next) =>{
     
 }
 const forgotPassword = async(req,res,next) =>{ 
-
+console.log("server is starting")
     const {email} = req.body
 
     if(!email){
@@ -164,10 +164,11 @@ const forgotPassword = async(req,res,next) =>{
     // store a reset token in database  and genrate URL.
     await user.save()
 
-    const resetPasswordUrl = `http://localhost:${process.env.PORT}/reset-/${resetToken}`
+    const resetPasswordUrl = `http://localhost:5055/user/reset-password/${resetToken}`
+    // change resetPasswordUrl after frotend done.
 
-    console.log("link: ",resetPasswordUrl)
-
+    console.log("url: ",resetPasswordUrl)
+    // 
     const subject = 'Reset Password';
   const message = `You can reset your password by clicking <a href=${resetPasswordUrl} target="_blank">Reset your password</a>\nIf the above link does not work for some reason then copy paste this link in new tab ${resetPasswordUrl}.\n If you have not requested this, kindly ignore.`;
 
@@ -181,12 +182,13 @@ const forgotPassword = async(req,res,next) =>{
         })
     }catch(e){
         // for any reason email not send
-        user.forgotpasswordExpiry = undefined;
+        user.forgotpasswordexpiry = undefined;
         user.forgotpasswordToken = undefined 
 
         await user.save()
         return next(new AppError(e.message,500))
     }
+    // send mail utility
 }
 
 const resetPassword = () =>{
