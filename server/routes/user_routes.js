@@ -15,6 +15,6 @@ router.post("/signin",signin)
 router.get("/logout",logout)
 router.get("/me", isLoggedin,getprofile)
 router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword)
+router.post("/reset-password/:resetToken", resetPassword)
 
 export default router

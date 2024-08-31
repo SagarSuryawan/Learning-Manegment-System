@@ -3,6 +3,7 @@ import USER from "../model/user.model.js"
 import cloudinary from "cloudinary"
 import fs from "fs/promises"
 import sendEmail from "../utils/sendEmail.js"
+import crypto from "crypto"
 
 const cookieOption = {
     maxAge:7 * 24 * 60 * 60 * 1000,
@@ -191,9 +192,35 @@ console.log("server is starting")
     // send mail utility
 }
 
-const resetPassword = () =>{
+const resetPassword = async(req,res,next) =>{
 
+    // data comes int he form of params
+     const { resetToken } = req.params
+
+     const { password } = req.body
+
+     const forgotPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+
+     const user = await USER.findOne({
+        forgotPasswordToken,
+        forgotPasswordExpiry: { $gt:Date.now() }
+     })
+     if(!user){
+        return next(new AppError('token is expired,try again',400))
+     }
+
+     user.password = password
+     user.forgotpasswordToken = undefined
+     user.forgotPasswordExpiry = undefined
+     user.save()
+     
+
+     res.status(200).json({
+        success:true,
+        message:'Password Change Successfully'
+     })
 }
+
 export {
     register,
     signin,
