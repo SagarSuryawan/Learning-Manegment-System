@@ -234,11 +234,47 @@ const resetPassword = async(req,res,next) =>{
      })
 }
 
+const changePassword = async(req,res,next) =>{
+// steps:- need old password and new password , check old password is correct or not ,if correct then update with new password.
+    const { oldPassword, newPassword } = req.body
+
+    const {id} = req.user
+
+    if( !oldPassword || !newPassword ){
+        return next(new AppError('All feild are required',400))
+    } 
+
+    const user = await USER.findById(id).select('+password')
+
+    if(!user){
+        return next(new AppError('User does not exists',400))
+    }
+
+    const isPasswordValid = await user.comparePassword(oldPassword)
+
+    if(isPasswordValid){
+        return next(new AppError('Password does not match',400))
+    }
+
+    user.password = newPassword
+
+    await user.save()
+
+    user.password = undefined;
+
+    res.status(200).json({
+        success:true,
+        message:"password changed successfully"
+    })
+
+}
+
 export {
     register,
     signin,
     logout,
     getprofile,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    changePassword
 }
