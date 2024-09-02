@@ -146,6 +146,7 @@ const getprofile = async(req,res,next) =>{
     }
     
 }
+
 const forgotPassword = async(req,res,next) =>{ 
 console.log("server is starting")
     const {email} = req.body
@@ -162,7 +163,7 @@ console.log("server is starting")
     // genrate random URL, before genrate URL reset Token is require.
     const resetToken = await user.genratePasswordResetToken()
 
-    // store a reset token in database  and genrate URL.
+    // store a reset token in database  and genrate URL.4
     await user.save()
 
     const resetPasswordUrl = `http://localhost:5055/user/reset-password/${resetToken}`
@@ -194,25 +195,37 @@ console.log("server is starting")
 
 const resetPassword = async(req,res,next) =>{
 
-    // data comes int he form of params
-     const { resetToken } = req.params
+    // data comes int he form of params,This is extracted from the URL parameters
+     const { resetToken } = req.params   
 
      const { password } = req.body
 
-     const forgotPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+     if (!password) {
+        return next(new AppError('Password is required', 400));
+      }
+
+     const forgotpasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex')
+    //  Hashing: The resetToken received from the user is hashed using the SHA-256 algorithm. This is done to match it against the hashed token stored in the database. Storing hashed tokens instead of plain text tokens enhances security.
+    // Digest in Hex: The .digest('hex') method converts the hash to a hexadecimal string, which is a common format for storing hashed data
+
 
      const user = await USER.findOne({
-        forgotPasswordToken,
-        forgotPasswordExpiry: { $gt:Date.now() }
+        forgotpasswordToken,
+        forgotpasswordexpiry: { $gt: Date.now() }
      })
+    //  This query searches the database for a user document that matches the hashed token and has a forgotPasswordExpiry field that is greater than the current time (i.e., the token is still valid).
+
+
      if(!user){
         return next(new AppError('token is expired,try again',400))
      }
 
      user.password = password
      user.forgotpasswordToken = undefined
-     user.forgotPasswordExpiry = undefined
-     user.save()
+     user.forgotpasswordexpiry = undefined
+    //  The user's password is updated with the new password provided in the request.After successfully resetting the password, the forgotPasswordToken and forgotPasswordExpiry fields are set to undefined, effectively removing them from the user's document. This ensures the token cannot be reused.
+
+     await user.save()
      
 
      res.status(200).json({
