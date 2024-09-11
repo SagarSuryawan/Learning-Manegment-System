@@ -100,6 +100,7 @@ const signin = async(req,res,next)=> {
     }
 
     const token = await user.jwtToken()
+    console.log(token)
     user.password = undefined
 
     res.cookie("token",token,cookieOption)
@@ -275,8 +276,10 @@ const updateUser = async(req,res,next) =>{
     const { fullName } = req.body
     const { id } = req.user.id
 
-    const user = await USER.findById(id)
 
+
+    const user = await USER.findById(id)
+    console.log("userrr",user);
     if(!user){
         return next (new AppError('user does not exists',400))
     }
