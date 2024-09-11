@@ -269,6 +269,56 @@ const changePassword = async(req,res,next) =>{
 
 }
 
+const updateUser = async(req,res,next) =>{
+
+// update fullname and profile picture
+    const { fullName } = req.body
+    const { id } = req.user.id
+
+    const user = await USER.findById(id)
+
+    if(!user){
+        return next (new AppError('user does not exists',400))
+    }
+    // modififcation
+    if (req.fullName){
+        user.fullname = fullName
+    }
+    // passed from multer
+    if (req.file) {
+        await cloudinary.v2.uploader.destroy(user.avatar.public_id)
+        // next step exactly same as upload in file in register  
+
+        try {
+            // upload the file to Cloudinary.cloudinary.v2.uploader.upload method uploads the file located at req.file.path.
+            const result = await cloudinary.v2.uploader.upload(req.file.path,{
+                folder:'LMS',
+                width:250,
+                height:250,
+                gravity:'faces',
+                crop:'fill'
+            });
+            // if i got a result 
+            if(result){
+                user.avatar.public_id = result.public_id;
+                user.avatar.secure_url = result.secure_url
+
+                // remove file local 
+                fs.rm(`uploads/${req.file.filename}`)
+            }
+        } catch (e) {
+            return next(new AppError (e.message || 'File not uploaded',500))
+        }
+    }
+    await user.save()
+
+    res.status(200).json({
+        success:true,
+        message:"user details updated successfully"
+    })
+
+}
+
 export {
     register,
     signin,
@@ -276,5 +326,6 @@ export {
     getprofile,
     forgotPassword,
     resetPassword,
-    changePassword
+    changePassword,
+    updateUser
 }
