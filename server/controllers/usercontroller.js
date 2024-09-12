@@ -274,17 +274,16 @@ const updateUser = async(req,res,next) =>{
 
 // update fullname and profile picture
     const { fullName } = req.body
-    const { id } = req.user.id
-
-
+    const { id } = req.user
 
     const user = await USER.findById(id)
-    console.log("userrr",user);
+    // console.log("userrr",user);
+
     if(!user){
         return next (new AppError('user does not exists',400))
     }
     // modififcation
-    if (req.fullName){
+    if (fullName){
         user.fullname = fullName
     }
     // passed from multer

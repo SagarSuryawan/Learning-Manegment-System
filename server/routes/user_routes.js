@@ -18,6 +18,7 @@ router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:resetToken", resetPassword)
 router.post("/change-password", isLoggedin,changePassword)
 // change-password method is used when user knew his passwrd and user wants to change to change it.
+
 router.put("/update",isLoggedin, upload.single("avatar"), updateUser)
 
 
