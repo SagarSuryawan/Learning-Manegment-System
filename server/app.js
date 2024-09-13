@@ -4,6 +4,8 @@ import cookieParser  from "cookie-parser"
 import morgan from "morgan"
 import userroutes from "./routes/user_routes.js"
 import errormiddleware from "./middleware/error.middleware.js"
+// courses
+import courseroutes from "./routes/course.router.js"
 
 
 const app = express()
@@ -28,6 +30,7 @@ app.use("/ping", function(req,res){
 // Routes of three modules 
 
 app.use("/user",userroutes)
+app.use("/courses",userroutes)
 
 app.all("*", (req,res) => {
     res.status(404)
