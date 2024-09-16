@@ -60,5 +60,6 @@ const courseSchema = new Schema({
 })
 
 const Course = model('Course',courseSchema);
+// model("Course",courseSchema) =>  Course is data collection name,courseSchema is name of schema name of course.
 
 export default Course
