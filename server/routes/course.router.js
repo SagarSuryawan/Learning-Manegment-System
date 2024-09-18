@@ -1,13 +1,20 @@
 import { Router } from "express";
-import { getAllCourses, getLecturesByCourseId } from "../controllers/course.controller.js";
+import { createCourse, getAllCourses, getLecturesByCourseId, removeCourse, updateCourse } from "../controllers/course.controller.js";
 import isLoggedin from "../middleware/auth.middleware.js";
+import upload from "../middleware/multer.middleware.js";
 
 const router = Router();
 
-// router.get("/", getAllCourses)
+// router.get("/", getAllCourses)  if admin in "/" path hit post request then create course flow 
 router.route("/").get(getAllCourses)
-// router.get("/:id", getLecturesByCourseId)
+                 .post(upload.single('thumbnail'),createCourse)
+                //  upload thumbnail photo in createCourse route
+                 
+
+// router.get("/:id", getLecturesByCourseId),for action taken place on indivisual course 
 router.route("/:id").get(isLoggedin,getLecturesByCourseId)
+                    .put(updateCourse)
+                    .delete(removeCourse)
 
 
 export default router
