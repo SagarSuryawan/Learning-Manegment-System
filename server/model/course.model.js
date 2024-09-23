@@ -21,14 +21,9 @@ const courseSchema = new Schema({
         required:[true,'Category is Required']
     },
     thumbnail:{
-        public_id:{
-            type:String,
-            required:true
-        },
-        secure_url:{
-            type:String,
-            required:true
-        }
+        public_id:String,
+        secure_url:String
+        
     },
     lectures:[
         {

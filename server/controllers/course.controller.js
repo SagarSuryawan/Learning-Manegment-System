@@ -1,6 +1,7 @@
 import Course from "../model/course.model.js";
 import AppError from "../utils/error.utils.js";
 import fs from "fs/promises";
+import cloudinary from "cloudinary"
 
 
 
@@ -67,29 +68,66 @@ const createCourse = async(req,res,next) =>{
     if(!course){
         return next(new AppError('Course Could not be Created,try Again',400))
     }
-    // check realated 
+    // check file realated 
     if(req.file){
+       
         try {
-            
-        } catch (error) {
-            
-        }
-        const result = await cloudinary.v2.uploader.upload(req.file.path, {
-            folder:'LMS'
-        })
-        if(result)
-        course.thumbnail.public_id = result.public_id;
-        course.thumbnail.secure_url = result.secure_url
+            const result = await cloudinary.v2.uploader.upload(req.file.path, {
+                folder:'LMS'
+            })
+            if(result)
+            course.thumbnail.public_id = result.public_id;
+            course.thumbnail.secure_url = result.secure_url
+    
+            // remove file
+            fs.rm(`uploads/${req.file.filename}`)
+    
 
-        // remove file
-        fs.rm(`uploads/${req.file.filename}`)
+            res.status(200).json({
+                success:true,
+                message:"Course Created successfully",
+                course 
+            })
+        } catch (error) {
+            return next(new AppError(e.message,400))
+        }
+        
     }
 
+    await course.save()
 
 }
 
 // update course by admin
 const updateCourse = async(req,res,next) =>{
+
+    try {
+        const { id } = req.params
+        const course = await Course.findByIdAndUpdate(
+            id,
+            {
+                $set:req.body
+            },
+            // overwrite information
+            {
+                runValidators:true
+            }
+            // it examin value are correct on the bassis of mongoose
+
+        );
+
+        if(!course){
+            return next(new AppError('course does not exists',400))
+        }
+
+        res.status(200).json({
+            success:true,
+            message:"Course Updated Sucessfully",
+            course
+        })
+    } catch (error) {
+        return next(new AppError(e.message,400))
+    }
 
 }
 
