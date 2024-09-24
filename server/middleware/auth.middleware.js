@@ -15,4 +15,19 @@ const isLoggedin = async(req,res,next)=>{
     next()
 }
 
-export default isLoggedin
+
+const AuthorizedRoles = (...roles) => async (req,res,next) =>{
+
+    const currentUserRole = req.user.role;
+    if(!roles.includes(currentUserRole)){
+        return next (new AppError('you do not have permission',403))
+    }
+    next();
+}
+
+export {
+    isLoggedin,
+    AuthorizedRoles
+}
+
+// Note:- (...roles) collects all the roles passed as arguments (e.g., ['admin', 'editor']) when you use this middleware.

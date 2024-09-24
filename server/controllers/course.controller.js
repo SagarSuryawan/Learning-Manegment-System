@@ -133,6 +133,38 @@ const updateCourse = async(req,res,next) =>{
 
 // remove course by admin
 const removeCourse = async(req,res,next) =>{
+    try {
+
+        const { id } = req.params
+        const course = await Course.findById(id)
+
+        if(!course){
+            return next(new AppError('Course Does not exists',400))
+        }
+
+        await Course.findByIdAndDelete(id)
+
+        res.status(200).json({
+            success:true,
+            message:'Course Deleted Successfully'
+        })
+
+    } catch (error) {
+        return next(new AppError(e.message,400))
+    }
+}
+
+// add lectures to course
+const addLecturesToCourseId = async (req,res,next) =>{
+
+    const { title, description } = req.body
+    const { id } = req.params
+
+    const course = await Course.findById(id);
+
+    if(!course){
+        return next( new AppError('Course does not found'400))
+    }
 
 }
 
